@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  // font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  //   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  //   sans-serif;
+  font-family: 'Gloria';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@font-face {
+  font-family: 'Gloria';
+  src: url('./assets/fonts/GloriaHallelujah-Regular.ttf');
+  
+}
+@font-face {
+  font-family: 'Patrick';
+  src: url('./assets/fonts/PatrickHand-Regular.ttf');
+  
+}
+@font-face {
+  font-family: 'Caveat';
+  src: url('./assets/fonts/Caveat-VariableFont_wght.ttf');
+}
+
+button{
+  width: 200px;
+  height: 60px;
+  background-color: var(--main-color);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  &:active{
+    transform:scale(0.98);
+  }
+font-family: 'Gloria';
+}
+
+textarea {
+  border: none;
+  outline: none;
+  resize: none;
+  box-shadow: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  margin: 0;
+  overflow: hidden;
+  cursor: text;
+
+  &:focus,
+  &:active {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+}
+:root{
+  --main-color:rgb(2, 115, 176);
+}
