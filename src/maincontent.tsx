@@ -11,6 +11,7 @@ interface Task {
     status: string;
     deadline: string;
     notes: string;
+    category: string;
 }
 
 const MainContent = () => {
@@ -23,27 +24,28 @@ const MainContent = () => {
     };
     const [todos, setTodos] = useState<Task[]>(loadTasks);
     const [title, setTitle] = useState('');
-    const [desc, setDesc] = useState('');
+    const [deadline, setDeadline] = useState('');
     const [prio, setPrio] = useState('');
+    const [notes, setNotes] = useState('');
+    const [category, setCategory] = useState('');
     const [isAddTaskVisible, setIsAddTaskVisible] = useState(false);
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setPrio(event.target.value);
-    };
+    const [isCatVisible, setisCatVisible] = useState(false);
 
 
 
     const addTask = () => {
-        if (!title || !desc || !prio) {
+        if (!title || !deadline || !notes) {
             alert('Bitte alle Felder ausfüllen');
             return
         }
         const newTask = {
             title: title,
-            description: desc,
+            description: '',
             prio: prio,
             status: 'undone',
-            deadline: new Date().toDateString(),
-            notes: '',
+            deadline: deadline,
+            notes: notes,
+            category: '',
         };
         console.log(newTask);
         const updatedTodos = [...todos, newTask];
@@ -65,43 +67,57 @@ const MainContent = () => {
     const toggleAddTask = () => {
         setIsAddTaskVisible(!isAddTaskVisible);
     }
+const openCategory=()=>{
+    setisCatVisible(true);
+    console.log(isCatVisible);
+    
+}
 
-    const addNote = (index: number) => {
-        console.log(index);
 
-    }
+    // const changePriority = (newPrio: string, indexToUpdate: number) => {
+    //     console.log(newPrio, indexToUpdate);
+    //     const updatedTodos = todos.map((todo, index) => {
+    //         if (index === indexToUpdate) {
+    //             return { ...todo, prio: newPrio }
+    //         }
+    //         return todo;
+    //     });
+    //     setTodos(updatedTodos);
+    //     localStorage.setItem('todos', JSON.stringify(updatedTodos));
+    // }
 
-    const changePriority = (newPrio: string, indexToUpdate: number) => {
-        console.log(newPrio, indexToUpdate);
+    // const changeState = (newState: string, indexToUpdate: number) => {
+    //     const updatedTodos = todos.map((todo, index) => {
+    //         if (index === indexToUpdate) {
+    //             return { ...todo, status: newState }
+    //         }
+    //         return todo
+    //     });
+    //     setTodos(updatedTodos);
+    //     localStorage.setItem('todos', JSON.stringify(updatedTodos));
+    // }
+
+    // const updateNotes = (newNote: string, indexToUpdate: number) => {
+    //     const updatedTodos = todos.map((todo, index) => {
+    //         if (index === indexToUpdate) {
+    //             return { ...todo, notes: newNote }
+    //         }
+    //         return todo;
+    //     });
+    //     setTodos(updatedTodos);
+    //     localStorage.setItem('todos', JSON.stringify(updatedTodos));
+    // }
+
+    const updateTodos = (newData: string, indexToUpdate: number, key: string) => {
         const updatedTodos = todos.map((todo, index) => {
             if (index === indexToUpdate) {
-                return { ...todo, prio: newPrio }
-            }
-            return todo;
-        });
-        setTodos(updatedTodos);
-        localStorage.setItem('todos', JSON.stringify(updatedTodos));
-    }
-
-    const changeState = (newState: string, indexToUpdate: number) => {
-        const updatedTodos = todos.map((todo, index) => {
-            if (index === indexToUpdate) {
-                return { ...todo, status:newState }
+                return { ...todo, [key]: newData };
             }
             return todo
-        });
+        })
         setTodos(updatedTodos);
-        localStorage.setItem('todos', JSON.stringify(updatedTodos));
-    }
+        console.log(updatedTodos);
 
-    const updateNotes=(newNote:string, indexToUpdate:number)=>{
-        const updatedTodos=todos.map((todo, index)=>{
-            if (index===indexToUpdate) {
-                return {...todo, notes:newNote}
-            }
-            return todo;
-        });
-        setTodos(updatedTodos);
         localStorage.setItem('todos', JSON.stringify(updatedTodos));
     }
 
@@ -112,14 +128,18 @@ const MainContent = () => {
                     <div className="addTask">
                         <h2>Neue Aufgabe</h2>
                         <input type="text" placeholder="Titel" value={title} onChange={e => setTitle(e.target.value)} />
-                        <input type="date" placeholder="Beschreibung" value={desc} onChange={e => setDesc(e.target.value)} />
-                        {/* <select name="priority" value={prio} onChange={handleChange} id="">
-                            <option value="" disabled hidden>Priorität auswählen</option>
-                            <option value="high">Hoch</option>
-                            <option value="medium">Mittel</option>
-                            <option value="low">Niegrig</option>
-                        </select> */}
-                        <textarea className="addTaskText" name="" id="" placeholder="Notiz"></textarea>
+                        <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
+                        <div className="taskBtnContainer">
+                            <span>Priorität</span>
+                            <div className="taskBtns">
+                                <button>Hoch</button>
+                                <button>Mittel</button>
+                                <button>Niedrig</button>
+                            </div>
+                        </div>
+                        <input onClick={ openCategory} type="text" value={category} placeholder="Kategorie" /> 
+
+                        <textarea className="addTaskText" value={notes} name="" id="" placeholder="Notiz" onChange={e => setNotes(e.target.value)}></textarea>
                         <div className="btns">
                             <button onClick={toggleAddTask}>Abbrechen</button>
                             <button onClick={addTask}>Task speichern</button>
@@ -129,7 +149,7 @@ const MainContent = () => {
                 </div>
 
             )}
-           <div className="main">
+            <div className="main">
                 <button onClick={toggleAddTask}>Neue Aufgabe</button>
                 <div>
                     <div className="headlineContainer">
@@ -139,9 +159,9 @@ const MainContent = () => {
                             {todos.map((todo, index) => (
                                 <div key={index} className="todo">
                                     <div>
-                                    <span>{todo.title}</span>
+                                        <span>{todo.title}</span>
                                     </div>
-                                 
+
                                 </div>
                             ))}
                         </div>
@@ -154,25 +174,25 @@ const MainContent = () => {
                             </div>
                             {todos.map((todo, index) => (
                                 <div className="prioRow" key={index}>
-                                    <div onClick={() => changePriority('high', index)} className="prioContainer">
+                                    <div onClick={() => updateTodos('high', index, 'prio')} className="prioContainer">
                                         {todo.prio === 'high' && (
                                             <div >
-                                                <span>{todo.description}</span>
+                                                <span>{todo.category}</span>
                                             </div>
                                         )}
                                     </div>
-                                    <div onClick={() => changePriority('medium', index)} className="prioContainer">
+                                    <div onClick={() => updateTodos('medium', index, 'prio')} className="prioContainer">
                                         {todo.prio === 'medium' && (
                                             <div >
-                                                <span>{todo.description}</span>
+                                                <span>{todo.category}</span>
                                             </div>
                                         )}
 
                                     </div>
-                                    <div onClick={() => changePriority('low', index)} className="prioContainer">
+                                    <div onClick={() => updateTodos('low', index, 'prio')} className="prioContainer">
                                         {todo.prio === 'low' && (
                                             <div >
-                                                <span>{todo.description}</span>
+                                                <span>{todo.category}</span>
                                             </div>
                                         )}
                                     </div>
@@ -190,21 +210,21 @@ const MainContent = () => {
                             {todos.map((todo, index) => (
                                 <div className="stateRows" key={index}>
                                     <div className="deadline stateContainer">
-                                        <span></span>
+                                        <span>{todo.deadline}</span>
                                     </div>
-                                    <div onClick={() => changeState('undone', index)} className="stateContainer">
+                                    <div onClick={() => updateTodos('undone', index, 'status')} className="stateContainer">
                                         {todo.status === 'undone' && (
 
                                             <img src="/img/clock.svg" alt="" />
                                         )}
 
                                     </div>
-                                    <div onClick={() => changeState('progress', index)} className="stateContainer">
+                                    <div onClick={() => updateTodos('progress', index, 'status')} className="stateContainer">
                                         {todo.status === 'progress' && (
                                             <img src="/img/progress.svg" alt="" />
                                         )}
                                     </div>
-                                    <div onClick={() => changeState('done', index)} className="stateContainer">
+                                    <div onClick={() => updateTodos('done', index, 'status')} className="stateContainer">
                                         {todo.status === 'done' && (
                                             < img src="/img/done.svg" alt="" />
                                         )}
@@ -223,7 +243,7 @@ const MainContent = () => {
                                         <span>Notizen</span>
                                     </div> */}
                                     <div className="text">
-                                        <textarea name="" value={todo.notes} id="" placeholder="Notizen eingeben" onChange={(e)=>updateNotes(e.target.value, index)}></textarea>
+                                        <textarea name="" value={todo.notes} id="" placeholder="Notizen eingeben" onChange={(e) => updateTodos(e.target.value, index, 'notes')}></textarea>
                                     </div>
                                 </div>
                             ))}
@@ -252,7 +272,7 @@ const MainContent = () => {
          */
 
             }
-            <img src="/img/IMG_1715.WEBP" alt="" />
+
         </section >
 
     );
