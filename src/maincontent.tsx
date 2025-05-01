@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import './maincontent.scss';
 import { useState } from "react";
 import { log } from "console";
@@ -30,7 +30,9 @@ const MainContent = () => {
     const [category, setCategory] = useState('');
     const [isAddTaskVisible, setIsAddTaskVisible] = useState(false);
     const [isCatVisible, setisCatVisible] = useState(false);
-
+    const [isEdit, setisEdit] = useState(false);
+    const [editIndex, seteditIndex] = useState(-1);
+    const cats = ['Arbeit', 'Schule', 'Haus', 'Freizeit', 'Sport', 'Vereine', 'Garten'];
 
 
     const addTask = () => {
@@ -38,22 +40,35 @@ const MainContent = () => {
             alert('Bitte alle Felder ausfüllen');
             return
         }
-        const newTask = {
+        const newTask = getTaskObject();
+        console.log(newTask);
+        const updatedTodos = [...todos, newTask];
+        setTodos(updatedTodos);
+        localStorage.setItem('todos', JSON.stringify(updatedTodos));
+        toggleAddTask();
+        removeFields();
+
+    }
+
+    const removeFields = () => {
+        setTitle('');
+        setPrio('');
+        setDeadline('');
+        setNotes('');
+        setCategory('');
+    }
+
+    const getTaskObject = () => {
+        return {
             title: title,
             description: '',
             prio: prio,
             status: 'undone',
             deadline: deadline,
             notes: notes,
-            category: '',
+            category: category,
         };
-        console.log(newTask);
-        const updatedTodos = [...todos, newTask];
-        setTodos(updatedTodos);
-        localStorage.setItem('todos', JSON.stringify(updatedTodos));
-        toggleAddTask();
     }
-
 
 
     const deleteTask = (indexToDelete: number) => {
@@ -66,47 +81,52 @@ const MainContent = () => {
 
     const toggleAddTask = () => {
         setIsAddTaskVisible(!isAddTaskVisible);
+        if (isEdit) {
+            setisEdit(!isEdit);
+        }
     }
-const openCategory=()=>{
-    setisCatVisible(true);
-    console.log(isCatVisible);
-    
-}
 
+    const setPriority = (newPrio: string) => {
+        console.log(newPrio);
+        setPrio(newPrio);
 
-    // const changePriority = (newPrio: string, indexToUpdate: number) => {
-    //     console.log(newPrio, indexToUpdate);
-    //     const updatedTodos = todos.map((todo, index) => {
-    //         if (index === indexToUpdate) {
-    //             return { ...todo, prio: newPrio }
-    //         }
-    //         return todo;
-    //     });
-    //     setTodos(updatedTodos);
-    //     localStorage.setItem('todos', JSON.stringify(updatedTodos));
-    // }
+    }
+    const toggleCatDropdown = () => {
+        setisCatVisible(!isCatVisible);
+        console.log(isCatVisible);
 
-    // const changeState = (newState: string, indexToUpdate: number) => {
-    //     const updatedTodos = todos.map((todo, index) => {
-    //         if (index === indexToUpdate) {
-    //             return { ...todo, status: newState }
-    //         }
-    //         return todo
-    //     });
-    //     setTodos(updatedTodos);
-    //     localStorage.setItem('todos', JSON.stringify(updatedTodos));
-    // }
+    }
 
-    // const updateNotes = (newNote: string, indexToUpdate: number) => {
-    //     const updatedTodos = todos.map((todo, index) => {
-    //         if (index === indexToUpdate) {
-    //             return { ...todo, notes: newNote }
-    //         }
-    //         return todo;
-    //     });
-    //     setTodos(updatedTodos);
-    //     localStorage.setItem('todos', JSON.stringify(updatedTodos));
-    // }
+    const editTask = (todo: any, indexToUpdate: number) => {
+        setisEdit(!isEdit)
+        seteditIndex(indexToUpdate);
+        console.log(isEdit);
+        setValues(todo);
+        toggleAddTask();
+
+    }
+
+    const setValues = (todo: any) => {
+        setTitle(todo.title);
+        setPrio(todo.prio);
+        setDeadline(todo.deadline);
+        setNotes(todo.notes);
+        setCategory(todo.category);
+    }
+
+    const saveEdit = () => {
+        console.log(editIndex);
+        const editedTask = getTaskObject();
+        const updatedTodos = todos.map((todo, index) => {
+            if (index === editIndex) {
+                return editedTask
+            }
+            return todo
+        });
+        setTodos(updatedTodos);
+        toggleAddTask();
+    }
+
 
     const updateTodos = (newData: string, indexToUpdate: number, key: string) => {
         const updatedTodos = todos.map((todo, index) => {
@@ -132,23 +152,42 @@ const openCategory=()=>{
                         <div className="taskBtnContainer">
                             <span>Priorität</span>
                             <div className="taskBtns">
-                                <button>Hoch</button>
-                                <button>Mittel</button>
-                                <button>Niedrig</button>
+                                <button className={prio !== 'high' ? 'taskBtnsHighlight' : ''} onClick={() => setPriority('high')}>Hoch</button>
+                                <button className={prio !== 'medium' ? 'taskBtnsHighlight' : ''} onClick={() => setPriority('medium')}>Mittel</button>
+                                <button className={prio !== 'low' ? 'taskBtnsHighlight' : ''} onClick={() => setPriority('low')}>Niedrig</button>
                             </div>
                         </div>
-                        <input onClick={ openCategory} type="text" value={category} placeholder="Kategorie" /> 
-
+                        {/* <input onClick={openCategory} type="text" value={category} placeholder="Kategorie" /> */}
+                        <div onClick={toggleCatDropdown} className="categoryContainer">
+                            <span>{category || 'Kategorie'}</span>
+                            {isCatVisible && (
+                                <div className="catDropdown">
+                                    {cats.map((cat, index) => (
+                                        <div onClick={() => { setCategory(cat); toggleCatDropdown() }} key={cat}>
+                                            <span>{cat}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                         <textarea className="addTaskText" value={notes} name="" id="" placeholder="Notiz" onChange={e => setNotes(e.target.value)}></textarea>
                         <div className="btns">
                             <button onClick={toggleAddTask}>Abbrechen</button>
-                            <button onClick={addTask}>Task speichern</button>
+                            {!isEdit && (
+                                <button onClick={addTask}>Task speichern</button>
+                            )}
+
+                            {isEdit && (
+                                <button onClick={saveEdit}>Änderung speichern</button>
+                            )}
+
                         </div>
 
                     </div>
                 </div>
 
-            )}
+            )
+            }
             <div className="main">
                 <button onClick={toggleAddTask}>Neue Aufgabe</button>
                 <div>
@@ -248,13 +287,24 @@ const openCategory=()=>{
                                 </div>
                             ))}
                         </div>
+                        <div className="options">
+                            <h2>Optionen</h2>
+                            <div className="placeholder borderBottom"></div>
+                            {todos.map((todo, index) => (
+                                <div className="editTask" key={index}>
+                                    <button onClick={() => editTask(todo, index)}><img src="/img/edit.svg" alt="" /></button>
+                                    <button onClick={() => deleteTask(index)}><img src="/img/delete.svg" alt="" /></button>
+                                </div>
+
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
             {
 
                 /*  <div className="task">
- 
+             
                      {todos.map((task, index) => (
                          <div className="taskCard" key={index}>
                              <div className="btnContainer">
@@ -266,10 +316,10 @@ const openCategory=()=>{
                              <p>{task.description}</p>
                              <span>{task.prio}</span>
                          </div>
- 
+             
                      ))}
                  </div>
-         */
+            */
 
             }
 
