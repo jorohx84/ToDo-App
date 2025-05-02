@@ -4,7 +4,8 @@ section {
     box-sizing: border-box;
     // padding: 40px;
     position: relative;
-
+    display: flex;
+    justify-content: center;
 }
 
 
@@ -16,6 +17,7 @@ h2 {
 
 .main {
     width: 100%;
+    max-width: fit-content;
     height: 100%;
     box-sizing: border-box;
     padding: 40px;
@@ -23,6 +25,56 @@ h2 {
     flex-direction: column;
     align-items: center;
     gap: 56px;
+}
+
+.mainBtns {
+
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+
+    >div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+    }
+}
+
+.filterOptions {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 216px;
+    top: 70px;
+    background-color: white;
+    width: 200px;
+    height: fit-content;
+    box-sizing: border-box;
+    padding: 10px 15px;
+    border: solid;
+    border-color: var(--border-color);
+
+
+}
+
+.filterOptionsRow {
+    width: 100%;
+
+    >span {
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        padding: 5px 10px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--border-color);
+        }
+    }
 }
 
 .headlineContainer {
@@ -171,16 +223,16 @@ h2 {
     }
 }
 
-.notes {
-    border-right: solid;
-    border-color: var(--border-color);
-}
+// .notes {
+//     border-right: solid;
+//     border-color: var(--border-color);
+// }
 
 .notesContainer {
     width: 300px;
     height: 80px;
     border-bottom: solid;
-
+    border-right: solid;
     border-color: var(--border-color);
     transition: background-color 0.3s ease-in-out;
 
@@ -229,23 +281,25 @@ h2 {
 
 .editTask {
     width: fit-content;
-    height: 82px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
- padding-left: 10px;
+    width: 200px;
     gap: 10px;
- 
-    >button{
+    border-bottom: solid;
+border-color: var(--border-color);
+    >button {
         width: 50px;
         height: 50px;
         display: flex;
         justify-content: center;
         align-items: center;
-    >img{
-        width: 15px;
 
-    }
+        >img {
+            width: 15px;
+
+        }
     }
 }
 
@@ -259,17 +313,10 @@ h2 {
     border-color: var(--border-color);
 }
 
-
-
-
-
-
-
-
-
-
-
-// Alt
+.options {
+    border-right: solid;
+    border-color: var(--border-color);
+}
 
 .task {
     display: flex;
@@ -408,6 +455,16 @@ input {
     padding: 10px 20px;
     border-color: var(--border-color);
     background-color: white;
+
+    >div {
+        cursor: pointer;
+        box-sizing: border-box;
+        padding: 5px 10px;
+
+        &:hover {
+            background-color: var(--border-color);
+        }
+    }
 }
 
 .addTaskText {

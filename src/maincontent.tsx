@@ -33,8 +33,10 @@ const MainContent = () => {
     const [isEdit, setisEdit] = useState(false);
     const [editIndex, seteditIndex] = useState(-1);
     const cats = ['Arbeit', 'Schule', 'Haus', 'Freizeit', 'Sport', 'Vereine', 'Garten'];
-
-
+    const [filterOpen, setfilterOpen] = useState(false);
+    const filter = ['Priorität', 'Status', 'Kategorie'];
+    const [search, setSearch] = useState('');
+    const originalTodos=loadTasks();
     const addTask = () => {
         if (!title || !deadline || !notes) {
             alert('Bitte alle Felder ausfüllen');
@@ -45,7 +47,7 @@ const MainContent = () => {
         const updatedTodos = [...todos, newTask];
         setTodos(updatedTodos);
         localStorage.setItem('todos', JSON.stringify(updatedTodos));
-        toggleAddTask();
+        closeAddTask();
         removeFields();
 
     }
@@ -79,11 +81,24 @@ const MainContent = () => {
 
     }
 
-    const toggleAddTask = () => {
-        setIsAddTaskVisible(!isAddTaskVisible);
+    // const toggleAddTask = () => {
+
+    //     if (isEdit) {
+    //         setisEdit(!isEdit);
+    //     }
+    //     setIsAddTaskVisible(!isAddTaskVisible);
+    // }
+
+    const openAddTask = () => {
+        setIsAddTaskVisible(true)
+    }
+
+    const closeAddTask = () => {
         if (isEdit) {
-            setisEdit(!isEdit);
+            setisEdit(false);
+            removeFields();
         }
+        setIsAddTaskVisible(false);
     }
 
     const setPriority = (newPrio: string) => {
@@ -98,11 +113,11 @@ const MainContent = () => {
     }
 
     const editTask = (todo: any, indexToUpdate: number) => {
-        setisEdit(!isEdit)
+        setisEdit(true)
         seteditIndex(indexToUpdate);
         console.log(isEdit);
         setValues(todo);
-        toggleAddTask();
+        openAddTask();
 
     }
 
@@ -124,7 +139,8 @@ const MainContent = () => {
             return todo
         });
         setTodos(updatedTodos);
-        toggleAddTask();
+        localStorage.setItem('todos', JSON.stringify(updatedTodos));
+        closeAddTask();
     }
 
 
@@ -139,6 +155,20 @@ const MainContent = () => {
         console.log(updatedTodos);
 
         localStorage.setItem('todos', JSON.stringify(updatedTodos));
+    }
+
+    const filterTasks = (filter: string) => {
+        console.log([filter]);
+
+    }
+
+    const searchForTask = (value: string) => {
+        if (value.length >= 3) {
+            const filteredTodos = originalTodos.filter((todo:any) => todo.title.toLowerCase().includes(value.toLowerCase()));
+            setTodos(filteredTodos);
+        } else {
+            setTodos(originalTodos);
+        }
     }
 
     return (
@@ -157,7 +187,7 @@ const MainContent = () => {
                                 <button className={prio !== 'low' ? 'taskBtnsHighlight' : ''} onClick={() => setPriority('low')}>Niedrig</button>
                             </div>
                         </div>
-                        {/* <input onClick={openCategory} type="text" value={category} placeholder="Kategorie" /> */}
+
                         <div onClick={toggleCatDropdown} className="categoryContainer">
                             <span>{category || 'Kategorie'}</span>
                             {isCatVisible && (
@@ -172,7 +202,7 @@ const MainContent = () => {
                         </div>
                         <textarea className="addTaskText" value={notes} name="" id="" placeholder="Notiz" onChange={e => setNotes(e.target.value)}></textarea>
                         <div className="btns">
-                            <button onClick={toggleAddTask}>Abbrechen</button>
+                            <button onClick={closeAddTask}>Abbrechen</button>
                             {!isEdit && (
                                 <button onClick={addTask}>Task speichern</button>
                             )}
@@ -189,7 +219,26 @@ const MainContent = () => {
             )
             }
             <div className="main">
-                <button onClick={toggleAddTask}>Neue Aufgabe</button>
+                <div className="mainBtns">
+                    <button onClick={openAddTask}>Neue Aufgabe</button>
+                    <div>
+                        <input value={search} onChange={e => { setSearch(e.target.value); searchForTask(e.target.value) }} type="text" placeholder="Suche" />
+                        <button onClick={() => setfilterOpen(!filterOpen)}>Filtern</button>
+                        <button>Sortieren</button>
+                    </div>
+
+                    {filterOpen && (
+                        <div className="filterOptions">
+                            {filter.map((fil, index) => (
+                                <div className="filterOptionsRow" key={index}>
+                                    <span onClick={() => filterTasks(fil)}>{fil}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                </div>
+
                 <div>
                     <div className="headlineContainer">
                         <div className="todos">
