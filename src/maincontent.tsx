@@ -33,12 +33,31 @@ const MainContent = () => {
     const [isEdit, setisEdit] = useState(false);
     const [editIndex, seteditIndex] = useState(-1);
     const cats = ['Arbeit', 'Schule', 'Haus', 'Freizeit', 'Sport', 'Vereine', 'Garten'];
+    const [isFiltered, setisFiltered] = useState(false);
     const [filterOpen, setfilterOpen] = useState(false);
-    const filter = ['Priorität', 'Status', 'Kategorie'];
     const [search, setSearch] = useState('');
-    const originalTodos=loadTasks();
+    const originalTodos = loadTasks();
+    const [statusChoice, setStatusChoice] = useState('');
+    const [priorityChoice, setPriorityChoice] = useState('');
+    const [catChoice, setcatChoice] = useState('');
+
+
+    const prios = [
+        { name: 'Hoch', value: 'high' },
+        { name: 'Mittel', value: 'medium' },
+        { name: 'Niedrig', value: 'low' }
+    ];
+
+    const stats = [
+        { name: 'Offen', value: 'undone' },
+        { name: 'In Bearbeitung', value: 'progress' },
+        { name: 'Erledigt', value: 'done' }
+    ];
+
+
+
     const addTask = () => {
-        if (!title || !deadline || !notes) {
+        if (!title || !deadline || !prio || !category) {
             alert('Bitte alle Felder ausfüllen');
             return
         }
@@ -163,14 +182,46 @@ const MainContent = () => {
     }
 
     const searchForTask = (value: string) => {
+        const inputValue=value.toLowerCase();
         if (value.length >= 3) {
-            const filteredTodos = originalTodos.filter((todo:any) => todo.title.toLowerCase().includes(value.toLowerCase()));
+            const filteredTodos = originalTodos.filter((todo: any) => todo.title.toLowerCase().includes(inputValue));
             setTodos(filteredTodos);
         } else {
             setTodos(originalTodos);
         }
     }
 
+    const filterTask = () => {
+        setisFiltered(true);
+        console.log(priorityChoice);
+        console.log(statusChoice);
+        console.log(catChoice);
+        const filteredTodos = originalTodos.filter((todo: any) =>
+            (!priorityChoice || todo.prio === priorityChoice) &&
+            (!statusChoice || todo.status === statusChoice) &&
+            (!catChoice || todo.catagory === catChoice)
+        );
+        setTodos(filteredTodos);
+        setfilterOpen(false);
+    }
+
+    const removeFilter = () => {
+        setPriorityChoice('');
+        setStatusChoice('');
+        setcatChoice('');
+        if (!filterOpen) {
+            setTodos(originalTodos);
+            setisFiltered(false);
+        }
+    }
+
+    const sortTodos = () => {
+        const sorted = [...todos].sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+        setTodos(sorted);
+    }
+
+
+    //
     return (
         <section >
             {isAddTaskVisible && (
@@ -222,18 +273,67 @@ const MainContent = () => {
                 <div className="mainBtns">
                     <button onClick={openAddTask}>Neue Aufgabe</button>
                     <div>
+                        {isFiltered && (
+                            <button onClick={removeFilter}>Filter zurücksetzen</button>
+                        )}
+
                         <input value={search} onChange={e => { setSearch(e.target.value); searchForTask(e.target.value) }} type="text" placeholder="Suche" />
                         <button onClick={() => setfilterOpen(!filterOpen)}>Filtern</button>
-                        <button>Sortieren</button>
+                        <button onClick={sortTodos}>Sortieren</button>
                     </div>
 
                     {filterOpen && (
-                        <div className="filterOptions">
-                            {filter.map((fil, index) => (
-                                <div className="filterOptionsRow" key={index}>
-                                    <span onClick={() => filterTasks(fil)}>{fil}</span>
+                        <div className="overlay">
+                            <div className="filterOptions">
+                                {/* <div className="filter">
+                                    <button className={filterOption !== 'prio' ? 'taskBtnsHighlight' : ''} onClick={() => setfilterOption('prio')}>Priorität</button>
+                                    <button className={filterOption !== 'status' ? 'taskBtnsHighlight' : ''} onClick={() => setfilterOption('status')}>Status</button>
+                                    <button className={filterOption !== 'cat' ? 'taskBtnsHighlight' : ''} onClick={() => setfilterOption('cat')}>Kategorie</button>
+                                </div> */}
+                                <div className="choiceContainer">
+
+                                    <div className="choice">
+                                        <div className="choiceHeadline">
+                                            <span>Priorität</span>
+                                        </div>
+
+                                        {prios.map((prio, index) => (
+                                            <div className={priorityChoice === prio.value ? 'choiceHighlight' : ''} key={index} onClick={() => setPriorityChoice(prio.value)}>
+                                                <span>{prio.name}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+
+                                    <div className="choice">
+                                        <div className="choiceHeadline">
+                                            <span>Status</span>
+                                        </div>
+                                        {stats.map((stat, index) => (
+                                            <div className={statusChoice === stat.value ? 'choiceHighlight' : ''} key={index} onClick={() => setStatusChoice(stat.value)}>
+                                                <span>{stat.name}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+
+                                    <div className="choice">
+                                        <div className="choiceHeadline">
+                                            <span>Kategorie</span>
+                                        </div>
+                                        {cats.map((cat, index) => (
+                                            <div className={catChoice === cat ? 'choiceHighlight' : ''} key={index} onClick={() => setcatChoice(cat)}>
+                                                <span>{cat}</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            ))}
+                                <div className="filterBtn">
+                                    <button onClick={() => setfilterOpen(false)}>Abbrechen</button>
+                                    <button onClick={removeFilter}>Filter zurücksetzen</button>
+                                    <button onClick={filterTask}>Filtern speichern</button>
+                                </div>
+                            </div>
                         </div>
                     )}
 
