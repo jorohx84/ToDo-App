@@ -552,7 +552,7 @@ input {
 @media(max-width:1700px){
     .todo{
         width: 200px;
-        height: 60px;
+        height: 80px;
         >div{
             >span{
                 font-size: 14px;
@@ -561,7 +561,7 @@ input {
     }
     .prioContainer{
         width: 100px;
-        height: 60px;
+        height: 80px;
         >div{
             >span{
                 font-size: 14px;
@@ -587,7 +587,7 @@ input {
     }
     .stateContainer{
         width: 100px;
-        height: 60px;
+        height: 80px;
         >span{
             font-size: 14px;
         }
@@ -597,13 +597,13 @@ input {
     }
     .notesContainer{
         width: 200px;
-        height: 60px;
+        height: 80px;
         
     }
 
     .editTask{
         width: 120px;
-        height: 60px;
+        height: 80px;
         >button{
             width: 35px;
             height: 35px;
@@ -636,4 +636,38 @@ input {
         height: 40px;
         font-size: 14px;
     }
+}
+
+@media(max-width:1300px){
+    .todo{
+        height: 70px;
+    }
+.prioContainer{
+    width: 80px;
+    height: 70px;
+}
+.prios{
+    height: 60px;
+    >div{
+        width: 70px;
+    }
+}
+.stateContainer{
+    width: 80px;
+    height: 70px;
+}
+.state{
+    height: 60px;
+    >span{
+        min-width: 80px;
+        max-width: 80px;
+    }
+}
+.notesContainer{
+    height: 70px;
+}
+.editTask{
+    height: 70px;
+}
+
 }
