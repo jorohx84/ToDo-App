@@ -1,8 +1,7 @@
 import React, { use } from "react";
 import './maincontent.scss';
 import { useState } from "react";
-import { log } from "console";
-import { get } from "http";
+
 
 interface Task {
     title: string;

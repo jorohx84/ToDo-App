@@ -1,0 +1,16 @@
+.imprint{
+    width: 100%;
+    height:calc(100vh - 240px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    align-items: flex-start;
+    flex: 1;
+    box-sizing: border-box;
+    padding: 48px 96px;
+}
+
+.backBtn{
+    width: 100%;
+    margin-top: 32px;
+}
