@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteBase /todoapp/
+RewriteRule ^ index.html [QSA,L]

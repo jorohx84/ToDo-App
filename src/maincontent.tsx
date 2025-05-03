@@ -14,6 +14,8 @@ interface Task {
 }
 
 const MainContent = () => {
+    console.log('MainContent gerendert');
+    
     const loadTasks = () => {
         const storedTodos = localStorage.getItem('todos');
         if (storedTodos) {
@@ -284,11 +286,7 @@ const MainContent = () => {
                     {filterOpen && (
                         <div className="overlay">
                             <div className="filterOptions">
-                                {/* <div className="filter">
-                                    <button className={filterOption !== 'prio' ? 'taskBtnsHighlight' : ''} onClick={() => setfilterOption('prio')}>Priorität</button>
-                                    <button className={filterOption !== 'status' ? 'taskBtnsHighlight' : ''} onClick={() => setfilterOption('status')}>Status</button>
-                                    <button className={filterOption !== 'cat' ? 'taskBtnsHighlight' : ''} onClick={() => setfilterOption('cat')}>Kategorie</button>
-                                </div> */}
+                    
                                 <div className="choiceContainer">
 
                                     <div className="choice">
@@ -402,18 +400,18 @@ const MainContent = () => {
                                     <div onClick={() => updateTodos('undone', index, 'status')} className="stateContainer">
                                         {todo.status === 'undone' && (
 
-                                            <img src="/img/clock.svg" alt="" />
+                                            <img src="./img/clock.svg" alt="" />
                                         )}
 
                                     </div>
                                     <div onClick={() => updateTodos('progress', index, 'status')} className="stateContainer">
                                         {todo.status === 'progress' && (
-                                            <img src="/img/progress.svg" alt="" />
+                                            <img src="./img/progress.svg" alt="" />
                                         )}
                                     </div>
                                     <div onClick={() => updateTodos('done', index, 'status')} className="stateContainer">
                                         {todo.status === 'done' && (
-                                            < img src="/img/done.svg" alt="" />
+                                            < img src="./img/done.svg" alt="" />
                                         )}
 
                                     </div>
@@ -440,8 +438,8 @@ const MainContent = () => {
                             <div className="placeholder borderBottom"></div>
                             {todos.map((todo, index) => (
                                 <div className="editTask" key={index}>
-                                    <button onClick={() => editTask(todo, index)}><img src="/img/edit.svg" alt="" /></button>
-                                    <button onClick={() => deleteTask(index)}><img src="/img/delete.svg" alt="" /></button>
+                                    <button onClick={() => editTask(todo, index)}><img src="./img/edit.svg" alt="" /></button>
+                                    <button onClick={() => deleteTask(index)}><img src="./img/delete.svg" alt="" /></button>
                                 </div>
 
                             ))}
